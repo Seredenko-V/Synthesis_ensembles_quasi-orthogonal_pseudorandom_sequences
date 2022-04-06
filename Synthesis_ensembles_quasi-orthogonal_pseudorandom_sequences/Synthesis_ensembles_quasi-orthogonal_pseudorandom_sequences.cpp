@@ -10,8 +10,8 @@
 #include <algorithm>
 #define PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062862
 
-const int exponent_polynomial = 3; // старшая степень полиномов
-const int GALOIS_FIELD = 3; // поле Галуа (простое число)
+const int exponent_polynomial = 7; // старшая степень полиномов
+const int GALOIS_FIELD = 2; // поле Галуа (простое число)
 const int coefficient_for_generate = exponent_polynomial + 1; // количество коэффициентов полинома
 int number_of_polynomials_0_and_1_exp = 0; // количество полиномов нулевой и первой степеней (по определению непреводимые)
 int number_of_polynomials_0_exp = 0; // количество полиномов нулевой степени (чтобы не делить на них в дальнейшем, т.к. остаток от деления будет 0)
@@ -94,8 +94,6 @@ void memory_cleaning(complex<double>** array, int string) // ОСВОБОЖДЕ�
 	}
 	delete[] array;
 }
-
-//int** array_of_all_polynomials = array_allocation_int(number_polynomials_not_zero, coefficient_for_generate); // массив для хранения всех возможных полиномов
 
 int* left(int a[], int N) // СМЕЩЕНИЕ НА 1 ВЛЕВО (используется в функции деления полиномов)
 {
@@ -417,7 +415,6 @@ void right(vector <int>& array, int size) // СМЕЩЕНИЕ НА 1 ЭЛЕМЕ�
 		array[i] = array[i - 1];
 	}
 	array[0] = temp;
-	//return array;
 }
 
 int** registers_addition(int array[], int size) // ОПРЕДЕЛЕНИЕ НЕНУЛЕВЫХ КОЭФФИЦИЕНТОВ МНОГОЧЛЕНА (КРОМЕ НУЛЕВОЙ СТРЕПЕНИ)
@@ -703,7 +700,6 @@ int* selection(int** PSP, int quantity, int length, double** array_cos, double m
 {
 	int string = 2; // количество строк массива содержащего кол-во минимумов и порядок ПСП
 	int** quantity_min_value_cos_string = array_allocation_int(string, quantity); // количество минимумов каждой ПСП
-	cout << endl << "Вектор кол-ва минимумов: ";
 	for (int i = 0; i < quantity; i++) // вычисление кол-ва минимумов в каждой строке (для каждой ПСП)
 	{
 		quantity_min_value_cos_string[0][i] = 0;
@@ -716,7 +712,6 @@ int* selection(int** PSP, int quantity, int length, double** array_cos, double m
 				quantity_min_value_cos_string[0][i]++;
 			}
 		}
-		cout << quantity_min_value_cos_string[0][i];
 	}
 	double average_value_of_minimums = 0; // среднее значение кол-ва минимиумов
 	int positions_max = 0; // ПСП, имеющая максимальное число минимумов
@@ -731,19 +726,7 @@ int* selection(int** PSP, int quantity, int length, double** array_cos, double m
 		average_value_of_minimums += quantity_min_value_cos_string[0][i];
 	}
 	average_value_of_minimums = average_value_of_minimums / quantity;
-	cout << endl << "Среднее значение количества минимумов: " << average_value_of_minimums;
-	cout << endl << "Максимальное значение минимумов в одной строке: " << max_quantity_min;
-	cout << endl << "ПСП, имеющая максимальное число минимумов: " << positions_max;
 	sorting(quantity_min_value_cos_string, string, quantity);
-	cout << endl << "Сортировка по убыванию (первая строка - кол-во минимумов; вторая - номер ПСП): " << endl;
-	for (int i = 0; i < string; i++)
-	{
-		for (int j = 0; j < quantity; j++)
-		{
-			cout << quantity_min_value_cos_string[i][j];
-		}
-		cout << endl;
-	}
 	int number_potential_PSP = 0; // кол-во ПСП, кол-во минимумов которых не ниже среднего
 	for (int i = 0; i < quantity; i++) // вычисление количества ПСП, кол-во минимумов которых не ниже среднего
 	{
@@ -752,31 +735,25 @@ int* selection(int** PSP, int quantity, int length, double** array_cos, double m
 			number_potential_PSP++;
 		}
 	}
-	cout << endl << "Кол-во ПСП, кол-во минимумов которых не ниже среднего: " << number_potential_PSP << " / " << quantity;
 	int** positions_min_value_cos = array_allocation_int(quantity, quantity); // в пересечении с какой ПСП 
 	// образуется минимум
-	cout << endl << endl << "В пересечении с какой ПСП образуется минимум: " << endl;
 	for (int i = 0; i < quantity; i++) // запись позиций минимумов в каждой строке (для каждой ПСП)
 	{
-		cout << "ПСП " << i << " образует минимумы в пересечении с ПСП: ";
 		for (int j = 0; j < quantity; j++)
 		{
 			bool equality = comparison(array_cos[i][j], min_value_cos, accuracy);
 			if (equality)
 			{
 				positions_min_value_cos[i][j] = j;
-				cout << positions_min_value_cos[i][j] << " ";
 			}
 			else
 			{
 				positions_min_value_cos[i][j] = -1;
 			}
 		}
-		cout << endl;
 	}
 	vector <int> list_quasi_orthogonal_PSP(1); // перечень квазиортогональных ПСП (с взаимными минимумами)
 	list_quasi_orthogonal_PSP.at(0) = positions_max; // запись ПСП, которая обладает наибольшим числом минимумов
-	cout << endl << "Из чего выбирать (сортировка по убыванию числа пересечений, образующих минимум): " << endl;
 	for (int i = 0; i < quantity; i++)
 	{
 		int counter_for_list_quasi_orthogonal_PSP = 0; // счетчик номеров ПСП с взаимыными минимумами
@@ -785,7 +762,6 @@ int* selection(int** PSP, int quantity, int length, double** array_cos, double m
 			if (positions_min_value_cos[quantity_min_value_cos_string[1][i]][j] != -1) // проверка на наличие 
 			// минимума в пересечении ПСП
 			{
-				cout << positions_min_value_cos[quantity_min_value_cos_string[1][i]][j] << " "; // упорядоченная 
 				// запись позиций минимумов в каждой строке (для каждой ПСП по убыванию числа минимумов)
 				for (int k = 0; k < list_quasi_orthogonal_PSP.size(); k++)
 				{
@@ -805,16 +781,13 @@ int* selection(int** PSP, int quantity, int length, double** array_cos, double m
 				}
 			}
 		}
-		cout << endl;
 	}
 	int* quasi_orthogonal_PSP = new int[list_quasi_orthogonal_PSP.size() + 1]; // массив, хранящий 
 	// квазиортогональные ПСП
 	quasi_orthogonal_PSP[0] = list_quasi_orthogonal_PSP.size(); // чтобы вернуть размерность массива в main
-	cout << endl << "Номера ПСП с взаимными минимумами: ";
 	for (int i = 0, j = 1; i < list_quasi_orthogonal_PSP.size(), j < list_quasi_orthogonal_PSP.size() + 1; i++, j++)
 	{
 		quasi_orthogonal_PSP[j] = list_quasi_orthogonal_PSP[i];
-		cout << quasi_orthogonal_PSP[j];
 	}
 	return quasi_orthogonal_PSP;
 	memory_cleaning(quantity_min_value_cos_string, string);
@@ -849,17 +822,7 @@ int main()
 	int number_polynomials = pow(mod, coefficient_for_generate);  // количество вариантов полиномов (для функции генерации)
 	int number_polynomials_not_zero = number_polynomials - 1; // количество вариантов полиномов без учета нулевого (для функции генерации) 
 	int** array_of_all_polynomials = array_allocation_int(number_polynomials_not_zero, coefficient_for_generate); // массив для хранения всех возможных полиномов
-	cout << "Количество возможных вариантов полиномов: " << number_polynomials_not_zero << endl;
 	generate_coefficient_for_polynom(SIZE, mod, number_polynomials_not_zero, array_of_all_polynomials);
-	for (int i = 0; i < number_polynomials_not_zero; i++)
-	{
-		for (int j = 0; j < SIZE; j++)
-		{
-			cout << array_of_all_polynomials[i][j] << " ";
-		}
-		cout << endl;
-	}
-
 	int** all_polynomials = array_allocation_int(number_polynomials_not_zero, coefficient_for_generate); // двумерный массив, содержащий все возможные полиномы
 	// (для передачи в функцию деления)
 	int** all_polynomials_for_check = array_allocation_int(number_polynomials_not_zero, coefficient_for_generate); // копия массива all_polynomials 
@@ -902,15 +865,6 @@ int main()
 	}
 	memory_cleaning(all_polynomials, number_polynomials_not_zero);
 	memory_cleaning(all_polynomials_for_check, number_polynomials_not_zero);
-	cout << endl << "Список коэффициентов неприводимых полиномов:" << endl;
-	print_matrix(vector_irreducible, vector_irreducible.size(), coefficient_for_generate);
-	cout << endl << "Список неприводимых полиномов:" << endl;
-	for (int i = 0; i < vector_irreducible.size(); i++)
-	{
-		conclusion_polynom(vector_irreducible[i], exp);
-		cout << endl;
-	}
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// СИНТЕЗ ПСП
 	int numbenumber_of_irreducible_polynomials = 0; // количество неприводимых полиномов степени exp
@@ -921,18 +875,14 @@ int main()
 			numbenumber_of_irreducible_polynomials++;
 		}
 	}
-	cout << endl << "Количество неприводимых полиномов " << exp << "-ой степени: " << numbenumber_of_irreducible_polynomials << endl;
 	int begin_polynom_for_PSP = vector_irreducible.size() - numbenumber_of_irreducible_polynomials; // строка, откуда начинаются полиномы максимальной степени (exp)
-	cout << endl << "Полиномы, на основе которых будут синтезироваться ПСП:" << endl;
 	int** irreducible_polynomials_for_PSP = array_allocation_int(numbenumber_of_irreducible_polynomials, coefficient_for_generate); // массив, хранящий полиномы, на основе которых будут синтезироваться ПСП
 	for (int i = 0, k = begin_polynom_for_PSP; i < vector_irreducible.size(), k < vector_irreducible.size(); i++, k++)
 	{
 		for (int j = 0; j < coefficient_for_generate; j++)
 		{
 			irreducible_polynomials_for_PSP[i][j] = vector_irreducible[k][j];
-			cout << irreducible_polynomials_for_PSP[i][j] << " ";
 		}
-		cout << endl;
 	}
 	int duration_PSP = pow(GALOIS_FIELD, exp) - 1; // период ПСП на основе полиномов степени exp
 	int** PSP = array_allocation_int(numbenumber_of_irreducible_polynomials, duration_PSP); // массив, хранящий ПСП
@@ -941,10 +891,8 @@ int main()
 		PSP[i] = generation_PSP(irreducible_polynomials_for_PSP[i], coefficient_for_generate, exp, duration_PSP);
 	}
 	memory_cleaning(irreducible_polynomials_for_PSP, numbenumber_of_irreducible_polynomials);
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// АКФ
-	cout << endl;
 	double** matrix_autocorrelation_function = array_allocation_double(numbenumber_of_irreducible_polynomials, duration_PSP); // массив, хранящий значения АКФ
 	vector <vector <int>> good_PSP; // массив, хранящий ПСП с хорошими АКФ
 	for (int i = 0; i < numbenumber_of_irreducible_polynomials; i++)
@@ -970,12 +918,8 @@ int main()
 			good_PSP_array[i][j] = good_PSP[i][j];
 		}
 	}
-	cout << endl << endl << "Количество ПСП, имеющих лишь один пик АКФ: " << good_PSP.size() << endl;
-	cout << endl << "ПСП, имеющие лишь один пик АКФ: " << endl;
-	print_matrix(good_PSP_array, good_PSP.size(), duration_PSP);
 	memory_cleaning(PSP, numbenumber_of_irreducible_polynomials);
 	memory_cleaning(matrix_autocorrelation_function, numbenumber_of_irreducible_polynomials);
-	///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// ЦИКЛИЧЕСКИЕ СДВИГИ
 	double** array_cos = array_allocation_double(good_PSP.size(), good_PSP.size()); // массив, хранящий значиния косинусов углов между ПСП
@@ -984,22 +928,17 @@ int main()
 	double length_PSP_float = duration_PSP; // для получения требуемого результата при делении
 	double min_value_cos = -1 / length_PSP_float;
 	double accuracy = 1e-8; // требуемая точность сравнения значения матрицы косинусов с её минимальным значением
-	cout << endl << "min_value_cos = " << min_value_cos << endl;
-	cout << endl << "Матрица значений косиусов углов между ПСП:" << endl;
 	for (int i = 0; i < good_PSP.size(); i++)
 	{
 		for (int j = 0; j < good_PSP.size(); j++)
 		{
-			cout << setw(10) << array_cos[i][j] << " ";
 			bool equality = comparison(array_cos[i][j], min_value_cos, accuracy);
 			if (equality)
 			{
 				quantity_min_value_cos_begin++;
 			}
 		}
-		cout << endl;
 	}
-	cout << endl << "Количество минимальных элементов исходной матрицы: " << quantity_min_value_cos_begin << endl;
 	int quantity_min_value_cos; // количество минимальных элементов после сдвига ПСП вправо на 1 элемент
 	for (int i = 0; i < good_PSP.size(); i++)
 	{
@@ -1031,8 +970,6 @@ int main()
 						position = k;
 					}
 				}
-				cout << endl << "Кол-во минимальных значений: " << quantity_min_value_cos_begin << endl;
-				cout << "При позиции: " << position << endl;
 				if (position != 0)
 				{
 					for (int k = 0; k < duration_PSP - 1 - position; k++)
@@ -1040,133 +977,36 @@ int main()
 						good_PSP_array[j] = left(good_PSP_array[j], duration_PSP);
 					}
 				}
-				for (int y = 0; y < duration_PSP; y++)
-				{
-					cout << good_PSP_array[j][y];
-				}
-				cout << endl;
-
 				array_cos = cos_angle(good_PSP_array, good_PSP.size(), duration_PSP);
-				cout << endl << "Матрица значений косиусов углов между ПСП:" << endl;
-				for (int n = 0; n < good_PSP.size(); n++)
-				{
-					for (int m = 0; m < good_PSP.size(); m++)
-					{
-						cout << setw(10) << array_cos[n][m] << " ";
-					}
-					cout << endl;
-				}
 			}
 		}
 	}
-	cout << endl << "Полученные ПСП: " << endl;
-	print_matrix(good_PSP_array, good_PSP.size(), duration_PSP);
-	//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// ВЫБОР КВАЗИОРТОГОНАЛЬНЫХ ПСП
 	int* quasi_orthogonal_PSP = selection(good_PSP_array, good_PSP.size(), duration_PSP, array_cos, min_value_cos, accuracy);
-	cout << endl << endl << "MAIN, quasi_orthogonal_PSP: ";
 	int total_amount = quasi_orthogonal_PSP[0]; // сколько всего квазиортогональных ПСП
-	for (int i = 1; i <= total_amount; i++)
-	{
-		cout << quasi_orthogonal_PSP[i];
-	}
 	int** quasi_orthogonal_PSP_full = array_allocation_int(total_amount, duration_PSP);
-	cout << endl << endl << "Квазиортогональные ПСП:" << endl;
+	ofstream file_quasi_orthogonal_PSP;
+	file_quasi_orthogonal_PSP.open("quasi_orthogonal_PSP.txt");
+	cout << "Квазиортогональные ПСП длины " << duration_PSP << ":" << endl;
 	for (int i = 1, k = 0; i <= total_amount, k < total_amount; i++, k++)
 	{
 		for (int j = 0; j < duration_PSP; j++)
 		{
 			quasi_orthogonal_PSP_full[k][j] = good_PSP_array[quasi_orthogonal_PSP[i]][j];
+			file_quasi_orthogonal_PSP << quasi_orthogonal_PSP_full[k][j];
 			cout << quasi_orthogonal_PSP_full[k][j];
 		}
+		file_quasi_orthogonal_PSP << endl;
 		cout << endl;
 	}
+	file_quasi_orthogonal_PSP.close();
 	double** array_cos_quasi_orthogonal_PSP = array_allocation_double(total_amount, total_amount);
 	array_cos_quasi_orthogonal_PSP = cos_angle(quasi_orthogonal_PSP_full, total_amount, duration_PSP);
-	cout << endl << "Матрица значений косиусов углов между квазиортогональными ПСП:" << endl;
-	for (int i = 0; i < total_amount; i++)
-	{
-		for (int j = 0; j < total_amount; j++)
-		{
-			cout << setw(10) << array_cos_quasi_orthogonal_PSP[i][j] << " ";
-		}
-		cout << endl;
-	}
-	//////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	// ВКФ КВАЗИОРТОГОНАЛЬНЫХ ПСП
-	int quantity_PSP_for_CCF = 2; // сколько ПСП участвуют в ВКФ
-	int quantity_combinations_CCF = factorial(total_amount) / (factorial(quantity_PSP_for_CCF) * factorial(total_amount - quantity_PSP_for_CCF)); // сколько всего неповторяющихся векторов ВКФ
-	cout << endl << "Количество неповторяющихся векторов ВКФ: " << quantity_combinations_CCF << endl;
-	double** matrix_cross_correlation_function = array_allocation_double(quantity_combinations_CCF, duration_PSP); // массив ВКФ
-	cout << endl << "Элементы выше главной диагонали:" << endl;
-	for (int i = 0; i < total_amount; i++)
-	{
-		for (int j = 0; j < total_amount; j++)
-		{
-			if (j > i)
-				cout << setw(10) << array_cos_quasi_orthogonal_PSP[i][j] << " " << "(ПСП " << i << " с ПСП " << j << ")" << "\t";
-		}
-		cout << endl;
-	}
-	int counter_size_matrix_CCF = 0;
-	for (int i = 0; i < total_amount; i++)
-	{
-		for (int j = 0; j < total_amount; j++)
-		{
-			if (j > i)
-			{
-				matrix_cross_correlation_function[counter_size_matrix_CCF] = crossСorrelation_function(quasi_orthogonal_PSP_full[i], quasi_orthogonal_PSP_full[j], duration_PSP); // заполнение матрицы ВКФ
-				counter_size_matrix_CCF++;
-			}
-		}
-	}
-	cout << endl << "Результат вычисления ВКФ:" << endl;
-	for (int i = 0; i < quantity_combinations_CCF; i++)
-	{
-		for (int j = 0; j < duration_PSP; j++)
-		{
-			cout << setw(4) << matrix_cross_correlation_function[i][j];
-		}
-		cout << endl;
-	}
-	double* max_CCF = new double[duration_PSP]; // вектор максимумов модулей ВКФ
-	cout << endl << "Вектор максимумов модулей ВКФ:" << endl;
-	for (int i = 0; i < duration_PSP; i++) // выбор максимумов модулей ВКФ
-	{
-		max_CCF[i] = abs(matrix_cross_correlation_function[0][i]);
-		for (int j = 0; j < quantity_combinations_CCF; j++)
-		{
-			if (max_CCF[i] < abs(matrix_cross_correlation_function[j][i]))
-			{
-				max_CCF[i] = abs(matrix_cross_correlation_function[j][i]);
-			}
-		}
-		cout << max_CCF[i] << " ";
-	}
-	double* min_CCF = new double[duration_PSP]; // вектор минимумов модулей ВКФ
-	cout << endl << "Вектор минимумов модулей ВКФ:" << endl;
-	for (int i = 0; i < duration_PSP; i++) // выбор максимумов ВКФ
-	{
-		min_CCF[i] = abs(matrix_cross_correlation_function[0][i]);
-		for (int j = 0; j < quantity_combinations_CCF; j++)
-		{
-			if (min_CCF[i] > abs(matrix_cross_correlation_function[j][i]))
-			{
-				min_CCF[i] = abs(matrix_cross_correlation_function[j][i]);
-			}
-		}
-		cout << min_CCF[i] << " ";
-	}
-
 	memory_cleaning(array_of_all_polynomials, number_polynomials_not_zero);
 	memory_cleaning(good_PSP_array, good_PSP.size());
 	memory_cleaning(array_cos, good_PSP.size());
 	memory_cleaning(quasi_orthogonal_PSP_full, total_amount);
 	memory_cleaning(array_cos_quasi_orthogonal_PSP, total_amount);
-	memory_cleaning(matrix_cross_correlation_function, quantity_combinations_CCF);
-	delete[] max_CCF;
-	delete[] min_CCF;
 	return 0;
 }
